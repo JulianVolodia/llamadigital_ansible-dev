@@ -1,0 +1,22 @@
+##
+# Ansible playbook for installing xdebug.
+#
+
+    ##
+    # Install & confgure xdebug
+    #
+    - name: XDEBUG |  Message of the day explaining server is under Ansible control.
+      action: apt pkg=php5-xdebug state=installed
+      register: xdebug_installed
+      tags: debug
+       
+    - name: XDEBUG | Get first line of /etc/php5/conf.d/xdebug.ini
+      action: command cat /etc/php5/conf.d/xdebug.ini
+      only_if: ${xdebug_installed.changed}
+      register: xdebug_first_line
+      tags: debug
+ 
+    - name: XDEBUG | xdebug configuration file, xdebug.ini
+      action: template src=templates/etc-php5-conf-d-xdebug-ini.j2 dest=/etc/php5/conf.d/xdebug.ini
+      only_if: ${xdebug_installed.changed}
+      tags: debug
